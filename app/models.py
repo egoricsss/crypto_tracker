@@ -14,7 +14,7 @@ class TickerEnum(Enum):
 
 class Base(DeclarativeBase):
     @declared_attr
-    def id() -> Mapped[int]:
+    def id(cls) -> Mapped[int]:
         return mapped_column(INTEGER, primary_key=True)
 
 
