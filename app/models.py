@@ -1,0 +1,37 @@
+from enum import Enum
+from datetime import datetime, timezone
+from decimal import Decimal
+
+from sqlalchemy import UniqueConstraint, Index
+from sqlalchemy.dialects.postgresql import TIMESTAMP, ENUM, NUMERIC, INTEGER
+from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, declared_attr
+
+
+class TickerEnum(Enum):
+    BTC_USD = "btc_usd"
+    ETH_USD = "eth_usd"
+
+
+class Base(DeclarativeBase):
+    @declared_attr
+    def id() -> Mapped[int]:
+        return mapped_column(INTEGER, primary_key=True)
+
+
+class Price(Base):
+    __tablename__ = "prices"
+
+    __table_args__ = (
+        UniqueConstraint("ticker", "time", name="uq_prices_ticker_time"),
+        Index(
+            "ix_prices_ticker_time", "ticker", "time", postgresql_ops={"time": "DESC"}
+        ),
+    )
+
+    ticker: Mapped[str] = mapped_column(ENUM(TickerEnum))
+    time: Mapped[datetime] = mapped_column(
+        TIMESTAMP(precision=3, timezone=True),
+        nullable=False,
+        default=datetime.now(timezone.utc),
+    )
+    current_price: Mapped[Decimal] = mapped_column(NUMERIC(20, 8), nullable=False)
