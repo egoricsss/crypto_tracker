@@ -1,4 +1,4 @@
-from .client import CryptoAPIClient
+from app.client.client import CryptoAPIClient
 from .repository import PriceRepository
 
 

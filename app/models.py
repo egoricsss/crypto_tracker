@@ -32,6 +32,6 @@ class Price(Base):
     time: Mapped[datetime] = mapped_column(
         TIMESTAMP(precision=3, timezone=True),
         nullable=False,
-        default=datetime.now(timezone.utc),
+        default=lambda: datetime.now(timezone.utc),
     )
     current_price: Mapped[Decimal] = mapped_column(NUMERIC(20, 8), nullable=False)
