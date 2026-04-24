@@ -8,5 +8,6 @@ dependencies = [
     "aiohttp>=3.13.5",
     "alembic>=1.18.4",
     "fastapi[standard]>=0.136.1",
+    "tenacity>=9.1.4",
     "uvicorn>=0.46.0",
 ]
