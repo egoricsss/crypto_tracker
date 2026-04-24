@@ -1,8 +1,8 @@
 """create_prices_table
 
-Revision ID: 4d52febd9bfa
+Revision ID: df913184a264
 Revises: 
-Create Date: 2026-04-24 12:25:34.181693
+Create Date: 2026-04-24 13:43:57.457126
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '4d52febd9bfa'
+revision: str = 'df913184a264'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

@@ -7,7 +7,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from app.models import Price
 from app.common.repositories import BaseRepository
-from app.client.schemas import PriceDTO
+from app.price.schemas import PriceCreateSchema
 
 
 class PriceRepository(BaseRepository):
@@ -15,7 +15,7 @@ class PriceRepository(BaseRepository):
         self.session = session
         super().__init__(session=session, model=Price)
 
-    async def upsert_prices(self, dtos: list[PriceDTO]) -> int: ...
+    async def upsert_prices(self, price_data: list[PriceCreateSchema]) -> int: ...
 
     async def get_latest_price_by_ticker(self, ticker: str) -> Price | None:
         stmt = (

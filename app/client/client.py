@@ -1,3 +1,6 @@
+from datetime import datetime
+from datetime import timezone
+
 import aiohttp
 from tenacity import (
     retry,
@@ -6,14 +9,14 @@ from tenacity import (
     retry_if_exception_type,
 )
 
-from .schemas import PriceDTO
+from .schemas import PriceDTO, DeribitPriceResponse
 
 
 class CryptoAPIClient:
     def __init__(
         self, base_url: str, api_key: str | None = None, timeout: float = 10.0
     ):
-        self.base_url = base_url
+        self.BASE_URL = base_url
         self.api_key = api_key
         self.timeout = timeout
         self.headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
@@ -22,7 +25,8 @@ class CryptoAPIClient:
     async def _ensure_session(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession(
-                timeout=self.timeout, headers=self.headers
+                timeout=aiohttp.ClientTimeout(self.timeout),
+                headers=self.headers,
             )
         return self._session
 
@@ -34,15 +38,32 @@ class CryptoAPIClient:
     )
     async def fetch_price(self, tickers: list[str]) -> list[PriceDTO]:
         session = await self._ensure_session()
-        params = None
+        results = []
 
-        async with session.get(f"{self.base_url}/prices", params=params) as response:
-            response.raise_for_status()
-            raw_data = await response.json()
-            # todo: create reponse foe Deribit API
-            ...
+        for ticker in tickers:
+            params = {"index_name": ticker}
 
-            return PriceDTO(...)
+            try:
+                async with session.get(
+                    f"{self.BASE_URL}/public/get_index_price", params=params
+                ) as response:
+                    response.raise_for_status()
+                    raw = await response.json()
+
+                    parsed = DeribitPriceResponse.model_validate(raw)
+
+                    dto = PriceDTO(
+                        ticker=ticker.upper(),
+                        current_price=parsed.result["index_price"],
+                        time=datetime.now(timezone.utc),
+                    )
+                    results.append(dto)
+
+            except Exception as e:
+                print(f"Failed to fetch {ticker}: {e}")
+                continue
+
+        return results
 
     async def close(self):
         if self._session and not self._session.closed:

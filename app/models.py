@@ -8,8 +8,8 @@ from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, declared_attr
 
 
 class TickerEnum(Enum):
-    BTC_USD = "btc_usd"
-    ETH_USD = "eth_usd"
+    BTC_USD = "btc_usdc"
+    ETH_USD = "eth_usdc"
 
 
 class Base(DeclarativeBase):
