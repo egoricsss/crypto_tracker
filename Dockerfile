@@ -15,8 +15,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
+# Copy and set up entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Set PYTHONPATH to include the app directory
 ENV PYTHONPATH=/app
 
-# Default command (can be overridden in docker-compose)
+# Use entrypoint script as default command
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["celery", "-A", "src.celery_app", "worker", "-l", "info"]
