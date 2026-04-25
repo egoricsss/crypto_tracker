@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies including postgresql-client for pg_isready
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# Copy application code (will be overridden by volume mount in dev)
 COPY . .
 
 # Copy and set up entrypoint script
@@ -23,6 +23,5 @@ RUN chmod +x /entrypoint.sh
 # Set PYTHONPATH to include the app directory
 ENV PYTHONPATH=/app
 
-# Use entrypoint script as default command
-ENTRYPOINT ["/entrypoint.sh"]
+# Default command (overridden by docker-compose)
 CMD ["celery", "-A", "src.celery_app", "worker", "-l", "info"]

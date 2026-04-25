@@ -1,10 +1,11 @@
-from enum import Enum
 from datetime import datetime, timezone
 from decimal import Decimal
+from enum import Enum
 
-from sqlalchemy import UniqueConstraint, Index
-from sqlalchemy.dialects.postgresql import TIMESTAMP, ENUM, NUMERIC, INTEGER
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, declared_attr
+from sqlalchemy import Index, UniqueConstraint
+from sqlalchemy.dialects.postgresql import ENUM, INTEGER, NUMERIC, TIMESTAMP
+from sqlalchemy.orm import (DeclarativeBase, Mapped, declared_attr,
+                            mapped_column)
 
 
 class TickerEnum(Enum):

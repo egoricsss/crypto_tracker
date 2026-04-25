@@ -1,8 +1,7 @@
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
 
-
-from pydantic import BaseModel, field_validator, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.models import TickerEnum
 

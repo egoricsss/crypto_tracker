@@ -1,4 +1,5 @@
 import os
+
 from celery import Celery
 
 # Set the default settings module for the 'celery' program.
@@ -24,7 +25,8 @@ celery_app.conf.update(
 )
 
 # Import beat schedule configuration
-from celery_config import beat_schedule, timezone as scheduler_timezone
+from celery_config import beat_schedule
+from celery_config import timezone as scheduler_timezone
 
 celery_app.conf.beat_schedule = beat_schedule
 celery_app.conf.timezone = scheduler_timezone

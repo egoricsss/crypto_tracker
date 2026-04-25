@@ -1,8 +1,7 @@
-from fastapi import FastAPI
 import uvicorn
+from fastapi import FastAPI
 
 from app.api_router.router import router as api_router
-
 
 app = FastAPI(title="crypto API")
 app.include_router(api_router)

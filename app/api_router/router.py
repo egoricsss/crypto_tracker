@@ -2,8 +2,9 @@ from datetime import datetime
 
 from fastapi import APIRouter, HTTPException, status
 
-from app.price.schemas import PriceSchema
 from app.models import TickerEnum
+from app.price.schemas import PriceSchema
+
 from .dependencies import PriceRepoDep, PriceSyncServiceDep
 
 router = APIRouter()

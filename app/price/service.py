@@ -1,8 +1,8 @@
 import logging
 
 from app.price.client import CryptoAPIClient
-from .repository import PriceRepository
 
+from .repository import PriceRepository
 
 logger = logging.getLogger(__name__)
 

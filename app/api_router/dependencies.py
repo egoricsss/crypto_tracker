@@ -3,11 +3,11 @@ from typing import Annotated, AsyncGenerator
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_db
-from app.price.repository import PriceRepository
-from app.price.client import CryptoAPIClient
-from app.price.service import PriceSyncService
 from app.config import settings
+from app.database import get_db
+from app.price.client import CryptoAPIClient
+from app.price.repository import PriceRepository
+from app.price.service import PriceSyncService
 
 
 async def get_price_repo(session: AsyncSession = Depends(get_db)) -> PriceRepository:
