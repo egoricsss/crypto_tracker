@@ -28,7 +28,18 @@ services:
 
   celery-worker:
     build: .
-    command: celery -A src.celery_app worker -l info -Q prices -c 2
+    command: >
+      bash -c "
+      echo 'Waiting for database to be ready...' &&
+      until pg_isready -h db -p 5432 -U \"${POSTGRES_USER:-crypto_user}\" -d \"${POSTGRES_DB:-crypto_tracker}\"; do
+        echo 'Database is unavailable - sleeping' &&
+        sleep 2;
+      done &&
+      echo 'Database is up - running migrations...' &&
+      alembic upgrade head &&
+      echo 'Starting Celery worker...' &&
+      exec celery -A src.celery_app worker -l info -Q prices -c 2
+      "
     env_file:
       - .env
     depends_on:
@@ -41,12 +52,25 @@ services:
 
   celery-beat:
     build: .
-    command: celery -A src.celery_app beat -l info
+    command: >
+      bash -c "
+      echo 'Waiting for database to be ready...' &&
+      until pg_isready -h db -p 5432 -U \"${POSTGRES_USER:-crypto_user}\" -d \"${POSTGRES_DB:-crypto_tracker}\"; do
+        echo 'Database is unavailable - sleeping' &&
+        sleep 2;
+      done &&
+      echo 'Database is up - running migrations...' &&
+      alembic upgrade head &&
+      echo 'Starting Celery beat...' &&
+      exec celery -A src.celery_app beat -l info
+      "
     env_file:
       - .env
     depends_on:
-      - redis
-      - celery-worker
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
       - .:/app
 
