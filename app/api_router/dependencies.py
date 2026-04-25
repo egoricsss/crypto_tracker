@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.price.repository import PriceRepository
-from app.client import CryptoAPIClient
+from app.price.client import CryptoAPIClient
 from app.price.service import PriceSyncService
 from app.config import settings
 

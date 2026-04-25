@@ -1,6 +1,6 @@
 import logging
 
-from app.client.client import CryptoAPIClient
+from app.price.client import CryptoAPIClient
 from .repository import PriceRepository
 
 
