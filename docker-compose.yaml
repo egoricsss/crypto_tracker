@@ -7,7 +7,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - cryptodata:/var/lib/postgresql/data
+      - cryptodata:/var/lib/postgresql/
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -17,7 +17,7 @@ services:
 
   redis:
     container_name: crypto_redis
-    image: redis/8.6-alpine
+    image: redis:latest
     ports:
       - "6379:6379"
     healthcheck:
