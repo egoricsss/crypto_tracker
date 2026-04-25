@@ -4,26 +4,57 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.venv/
+*.py.class
+*.py.o
+*.py.obj
+*.py.out
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
 venv/
+.venv/
+env/
+.ENV/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment variables
 .env
 .env.local
 *.env.*
 
-# Logs and temp files
-*.log
-*.tmp
-
-# Editors
-.vscode/
-.idea/
-
 # Coverage reports
-.coverage
 coverage/
 htmlcov/
+.coverage
 
-# Celery
-celerybeat-schedule
-celery/
+# IDE specific
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.Python
+*.so
+*.egg
+*.egg-info/
 ```
