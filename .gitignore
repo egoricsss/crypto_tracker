@@ -1,4 +1,5 @@
-```
+# Celery
+celerybeat-schedule
 # Dependencies
 __pycache__/
 *.pyc
@@ -57,4 +58,3 @@ __pycache__/
 *.so
 *.egg
 *.egg-info/
-```
