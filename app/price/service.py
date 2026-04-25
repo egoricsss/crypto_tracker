@@ -1,5 +1,10 @@
+import logging
+
 from app.client.client import CryptoAPIClient
 from .repository import PriceRepository
+
+
+logger = logging.getLogger(__name__)
 
 
 class PriceSyncService:
@@ -12,14 +17,24 @@ class PriceSyncService:
         self.repository = repository
         self.tickers = ["btc_usdc", "eth_usdc"]
 
-    async def sync(self) -> int:
+    async def sync_prices(self, tickers: list[str] | None = None) -> dict:
+        """Основная бизнес-логика: fetch → upsert."""
         try:
-            prices_dto = await self.api_client.fetch_price(self.tickers)
+            dtos = await self.api_client.fetch_price(
+                tickers if tickers else self.tickers
+            )
+            logger.info(f"Fetched {len(dtos)} prices from Deribit")
 
-            result = await self.repository.upsert_prices(prices_dto)
+            if not dtos:
+                return {"fetched": 0, "upserted": 0, "status": "no_data"}
 
-            return result
+            upserted = await self.repository.upsert_prices(dtos)
+            logger.info(f"Upserted {upserted} prices to database")
+
+            return {"fetched": len(dtos), "upserted": upserted, "status": "success"}
 
         except Exception as e:
-            print(f"Error: {e}")
-            return 0
+            logger.error(f"Sync failed: {e}", exc_info=True)
+            raise
+        finally:
+            await self.api_client.close()

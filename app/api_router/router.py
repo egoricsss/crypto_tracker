@@ -10,9 +10,9 @@ router = APIRouter()
 
 
 @router.get("/prices/fetch")
-async def get_price(price_service: PriceSyncServiceDep) -> int:
-    inserted_rows = await price_service.sync()
-    return inserted_rows
+async def get_price(price_service: PriceSyncServiceDep) -> dict:
+    message = await price_service.sync_prices()
+    return message
 
 
 @router.get("/prices/latest", response_model=PriceSchema)
@@ -42,6 +42,6 @@ async def get_prices_by_time_range(
 async def get_all_prices(repository: PriceRepoDep, ticker: TickerEnum | None = None):
     if ticker is None:
         all_prices = await repository.get_all()
-    else:        
+    else:
         all_prices = await repository.get_with_filters(ticker=ticker)
     return all_prices

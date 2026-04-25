@@ -9,11 +9,46 @@ services:
     volumes:
       - cryptodata:/var/lib/postgresql/
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 5s
       timeout: 5s
       retries: 5
     restart: unless-stopped
+
+  redis:
+    container_name: crypto_redis
+    image: redis/8.6-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  celery-worker:
+    build: .
+    command: celery -A src.celery_app worker -l info -Q prices -c 2
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_heathy
+      redis:
+        condition: service_heathy
+    volumes:
+      - .:/app
+
+  celery-beat:
+    build: .
+    command: celery -A src.celery_app beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - celery-worker
+    volumes:
+      - .:/app
 
 volumes:
   cryptodata:
