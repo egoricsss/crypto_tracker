@@ -15,13 +15,16 @@ class PriceRepository(BaseRepository):
         self.session = session
         super().__init__(session=session, model=Price)
 
-    async def upsert_prices(self, price_data: list[PriceCreateSchema]) -> int: ...
+    async def upsert_prices(self, price_data: list[PriceCreateSchema]) -> int:
+        stmt = insert(self.model).values([row.model_dump() for row in price_data])
+        result = await self.session.execute(stmt)
+        return result.rowcount
 
     async def get_latest_price_by_ticker(self, ticker: str) -> Price | None:
         stmt = (
             select(self.model)
             .where(self.model.ticker == ticker)
-            .order_by(self.model.price.desc())
+            .order_by(self.model.current_price.desc())
             .limit(1)
         )
         result = await self.session.scalar(stmt)

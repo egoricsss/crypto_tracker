@@ -10,12 +10,16 @@ class PriceSyncService:
     ):
         self.api_client = api_client
         self.repository = repository
+        self.tickers = ["btc_usdc", "eth_usdc"]
 
-    async def sync(self, tickers: list[str]) -> dict:
+    async def sync(self) -> int:
         try:
-            dtos = await self.api_client.fetch_prices(tickers)
+            prices_dto = await self.api_client.fetch_price(self.tickers)
 
-            saved_count = await self.repository.upsert_prices(dtos)
+            result = await self.repository.upsert_prices(prices_dto)
+
+            return result
 
         except Exception as e:
-            ...
+            print(f"Error: {e}")
+            return 0
