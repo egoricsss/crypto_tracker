@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from datetime import timezone
 
@@ -10,6 +11,9 @@ from tenacity import (
 )
 
 from .schemas import PriceDTO, DeribitPriceResponse
+
+
+logger = logging.getLogger(__name__)
 
 
 class CryptoAPIClient:
@@ -60,7 +64,7 @@ class CryptoAPIClient:
                     results.append(dto)
 
             except Exception as e:
-                print(f"Failed to fetch {ticker}: {e}")
+                logger.error(f"Failed to fetch {ticker}: {e}")
                 continue
 
         return results

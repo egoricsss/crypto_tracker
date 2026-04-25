@@ -1,3 +1,4 @@
+import os
 from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import (
@@ -25,3 +26,8 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             raise
         finally:
             await session.close()
+
+
+def get_engine() -> AsyncEngine:
+    """Get the database engine for direct access."""
+    return __engine

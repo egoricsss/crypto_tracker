@@ -7,9 +7,9 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - cryptodata:/var/lib/postgresql/
+      - cryptodata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -21,7 +21,7 @@ services:
     ports:
       - "6379:6379"
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,15 +33,15 @@ services:
       - .env
     depends_on:
       db:
-        condition: service_heathy
+        condition: service_healthy
       redis:
-        condition: service_heathy
+        condition: service_healthy
     volumes:
       - .:/app
 
   celery-beat:
     build: .
-    command: celery -A src.celery_app beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    command: celery -A src.celery_app beat -l info
     env_file:
       - .env
     depends_on:

@@ -1,16 +1,29 @@
-# WSL venv
-.wsl-venv
-
-# env files
-.env
-
-# Python-generated files
+```
+# Dependencies
 __pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+.env.local
+*.env.*
 
-# Virtual environments
-.venv
+# Logs and temp files
+*.log
+*.tmp
+
+# Editors
+.vscode/
+.idea/
+
+# Coverage reports
+.coverage
+coverage/
+htmlcov/
+
+# Celery
+celerybeat-schedule
+celery/
+```
