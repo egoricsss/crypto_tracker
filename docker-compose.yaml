@@ -9,7 +9,7 @@ services:
     volumes:
       - cryptodata:/var/lib/postgresql/
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -21,25 +21,13 @@ services:
     ports:
       - "6379:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   celery-worker:
     build: .
-    command: >
-      bash -c "
-      echo 'Waiting for database to be ready...' &&
-      until pg_isready -h db -p 5432 -U \"${POSTGRES_USER:-crypto_user}\" -d \"${POSTGRES_DB:-crypto_tracker}\"; do
-        echo 'Database is unavailable - sleeping' &&
-        sleep 2;
-      done &&
-      echo 'Database is up - running migrations...' &&
-      alembic upgrade head &&
-      echo 'Starting Celery worker...' &&
-      exec celery -A src.celery_app worker -l info -Q prices -c 2
-      "
     env_file:
       - .env
     depends_on:
@@ -47,23 +35,10 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    volumes:
-      - .:/app
-
+    command: >
+      bash -c "exec celery -A src.celery_app worker -l info -Q prices -c 2"
   celery-beat:
     build: .
-    command: >
-      bash -c "
-      echo 'Waiting for database to be ready...' &&
-      until pg_isready -h db -p 5432 -U \"${POSTGRES_USER:-crypto_user}\" -d \"${POSTGRES_DB:-crypto_tracker}\"; do
-        echo 'Database is unavailable - sleeping' &&
-        sleep 2;
-      done &&
-      echo 'Database is up - running migrations...' &&
-      alembic upgrade head &&
-      echo 'Starting Celery beat...' &&
-      exec celery -A src.celery_app beat -l info
-      "
     env_file:
       - .env
     depends_on:
@@ -71,8 +46,20 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    volumes:
-      - .:/app
+    command: >
+      bash -c "exec celery -A src.celery_app beat -l info"
+    
+  main_app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      bash -c "exec python -m app.main"
 
 volumes:
   cryptodata:

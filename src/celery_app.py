@@ -3,7 +3,7 @@ import os
 from celery import Celery
 
 # Set the default settings module for the 'celery' program.
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.config")
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.config")
 
 # Create Celery app
 celery_app = Celery(
@@ -27,6 +27,8 @@ celery_app.conf.update(
 # Import beat schedule configuration
 from celery_config import beat_schedule
 from celery_config import timezone as scheduler_timezone
+
+from app.price.tasks import fetch_deribit_prices
 
 celery_app.conf.beat_schedule = beat_schedule
 celery_app.conf.timezone = scheduler_timezone

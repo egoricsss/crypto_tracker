@@ -23,7 +23,7 @@ class PriceRepository(BaseRepository):
         stmt = (
             select(self.model)
             .where(self.model.ticker == ticker)
-            .order_by(self.model.current_price.desc())
+            .order_by(self.model.time.desc())
             .limit(1)
         )
         result = await self.session.scalar(stmt)
